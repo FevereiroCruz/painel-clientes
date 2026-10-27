@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="__AVATAR__">
+<style>[hidden]{display:none!important}body{margin:0}</style>
+<title>Painel __CLIENTE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: portal de cliente — barra lateral azul-marinho com o portfólio ativo, área principal com cockpit, indicadores e tabelas */
+:root{
+  --navy:#1B3A6B; --navy-deep:#11264A; --gold:#C8A44A; --gold-soft:#F3E7C4;
+  --bg:#F3F5F9; --panel:#FFFFFF; --cream:#FFF8E7; --fg:#18233A; --muted:#5C6B85; --line:#DCE2EC;
+  --side-fg:#E9EEF7; --side-muted:#9FB0CC; --side-line:rgba(255,255,255,.12);
+  --crit:#B42318; --crit-bg:#FDECEA; --alto:#B54708; --alto-bg:#FEF0E3; --medio:#8A6A00; --medio-bg:#FBF3D6;
+  --ok:#1E7A4C; --ok-bg:#E3F4EA; --info:#2B5BA8; --info-bg:#E6EEFA; --neutral-bg:#EEF1F6;
+  --f-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-body:"IBM Plex Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1322; --panel:#141E33; --cream:#1A2640; --fg:#E6EBF4; --muted:#9AA8C2; --line:#26334D;
+  --navy-deep:#08101F; --gold-soft:#3A3220;
+  --crit:#F97066; --crit-bg:#3A1714; --alto:#F7A35C; --alto-bg:#3A2412; --medio:#E5C25A; --medio-bg:#332A0E;
+  --ok:#5DD39E; --ok-bg:#12301F; --info:#86AEF0; --info-bg:#16264A; --neutral-bg:#1C2741;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1322; --panel:#141E33; --cream:#1A2640; --fg:#E6EBF4; --muted:#9AA8C2; --line:#26334D;
+  --navy-deep:#08101F; --gold-soft:#3A3220;
+  --crit:#F97066; --crit-bg:#3A1714; --alto:#F7A35C; --alto-bg:#3A2412; --medio:#E5C25A; --medio-bg:#332A0E;
+  --ok:#5DD39E; --ok-bg:#12301F; --info:#86AEF0; --info-bg:#16264A; --neutral-bg:#1C2741;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.5}
+button{font:inherit;color:inherit}
+a{color:var(--info)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Lock screen ---------- */
+.lock{position:fixed;inset:0;z-index:50;background:radial-gradient(1200px 600px at 20% 0%,#244B86 0%,var(--navy) 35%,#0B1B36 100%);
+  display:grid;place-items:center;padding-block:calc(24px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:auto}
+.lock-card{width:100%;max-width:400px;background:#FFFFFF;color:#18233A;border-radius:14px;padding:32px 28px;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+.lock-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.mark{width:44px;height:44px;border-radius:10px;object-fit:cover;display:block;flex:none;background:#111;box-shadow:0 0 0 1px rgba(200,164,74,.35)}
+.lock-brand b{display:block;font-size:15px}
+.lock-brand span{font-size:12px;color:#5C6B85}
+.lock h1{font-family:var(--f-display);font-weight:600;font-size:24px;line-height:1.2;margin:0 0 6px;text-wrap:balance}
+.lock p{margin:0 0 20px;color:#5C6B85;font-size:13.5px}
+.lock label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#5C6B85;margin-bottom:6px}
+.lock input{width:100%;font-family:var(--f-mono);font-size:22px;letter-spacing:.3em;text-align:center;padding:12px 8px 12px 20px;border:1.5px solid #CBD3E1;border-radius:8px;background:#F7F9FC;color:#18233A}
+.lock input:focus{border-color:#1B3A6B;outline:none;box-shadow:0 0 0 3px rgba(200,164,74,.35)}
+.lock .btn-primary{margin-top:14px;width:100%}
+.lock .err{color:#B42318;font-size:13px;min-height:20px;margin-top:10px}
+.lock .fine{margin:22px 0 0;padding-top:16px;border-top:1px solid #E3E8F0;font-size:12px;color:#6B7890}
+.btn-primary{background:var(--navy);color:#fff;border:0;border-radius:8px;padding:12px 16px;font-weight:600;cursor:pointer}
+.btn-primary:hover{background:#244B86}
+.btn-primary:disabled{opacity:.6;cursor:wait}
+
+/* ---------- App shell ---------- */
+.app{display:grid;grid-template-columns:272px minmax(0,1fr);min-height:100%}
+.side{background:var(--navy-deep);color:var(--side-fg);position:sticky;top:0;height:100vh;overflow:auto;display:flex;flex-direction:column;
+  padding:22px 16px calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.side-brand{display:flex;align-items:center;gap:10px;padding:0 6px 18px}
+.side-brand b{display:block;font-size:14px}
+.side-brand span{font-size:11.5px;color:var(--side-muted)}
+.portfolio{border:1px solid var(--side-line);border-radius:var(--r);padding:12px;background:rgba(255,255,255,.04);margin-bottom:18px}
+.eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.side .eyebrow{color:var(--side-muted)}
+.portfolio select{margin-top:8px;width:100%;background:rgba(255,255,255,.08);color:var(--side-fg);border:1px solid var(--side-line);border-radius:8px;padding:9px 10px;font:inherit;font-weight:600}
+.portfolio select option{color:#18233A;background:#fff}
+.portfolio .tit{margin-top:8px;font-size:11.5px;color:var(--side-muted);line-height:1.4}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav .eyebrow{margin:14px 8px 6px}
+.nav button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:9px 10px;color:var(--side-fg);cursor:pointer;font-size:14px}
+.nav button:hover{background:rgba(255,255,255,.06)}
+.nav button[aria-current="page"]{background:rgba(255,255,255,.12);font-weight:600}
+.nav .count{font-size:11.5px;min-width:22px;text-align:center;padding:1px 7px;border-radius:999px;background:rgba(255,255,255,.1);color:var(--side-fg)}
+.nav .count.hot{background:#C2412D;color:#fff}
+.side-foot{margin-top:auto;padding-top:18px;font-size:11.5px;color:var(--side-muted);display:flex;flex-direction:column;gap:10px}
+.side-foot .who{border:1px solid var(--side-line);border-radius:var(--r);padding:10px 12px;line-height:1.5}
+.side-foot .who b{color:var(--side-fg);display:block;font-size:12.5px}
+.btn-ghost{background:none;border:1px solid var(--side-line);color:var(--side-fg);border-radius:8px;padding:8px 10px;cursor:pointer;font-size:12.5px}
+.btn-ghost:hover{background:rgba(255,255,255,.06)}
+
+.main{min-width:0;padding-block:24px calc(40px + env(safe-area-inset-bottom,0px));padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.topline{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.topline .eyebrow{color:var(--muted)}
+.topline h2{margin:2px 0 0;font-size:22px;font-weight:600}
+.stamp{font-size:12px;color:var(--muted)}
+
+.cockpit{background:linear-gradient(120deg,var(--navy-deep) 0%,var(--navy) 70%,#24497F 100%);color:#fff;border-radius:14px;padding:22px 24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:flex-end}
+.cockpit .eyebrow{color:var(--gold)}
+.cockpit h3{font-family:var(--f-display);font-weight:600;font-size:30px;line-height:1.1;margin:6px 0 6px;text-wrap:balance}
+.cockpit p{margin:0;color:#C9D5EA;font-size:13px;max-width:62ch}
+.cockpit .meta{display:flex;gap:22px;flex-wrap:wrap}
+.cockpit .meta div{min-width:90px}
+.cockpit .meta b{display:block;font-family:var(--f-display);font-size:26px;font-weight:600;line-height:1.1}
+.cockpit .meta span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#C9D5EA}
+
+.alert{display:flex;gap:14px;align-items:flex-start;background:var(--crit-bg);border:1px solid color-mix(in srgb,var(--crit) 35%,transparent);border-radius:var(--r);padding:14px 16px}
+.alert .dot{width:10px;height:10px;border-radius:50%;background:var(--crit);margin-top:6px;flex:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--crit) 22%,transparent)}
+.alert b{color:var(--crit)}
+.alert p{margin:2px 0 0}
+.alert button{margin-top:8px;background:var(--crit);color:#fff;border:0;border-radius:7px;padding:7px 12px;font-weight:600;cursor:pointer;font-size:13px}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.kpi .eyebrow{color:var(--muted)}
+.kpi b{display:block;font-family:var(--f-display);font-weight:600;font-size:30px;line-height:1.15;margin-top:4px}
+.kpi span{font-size:12px;color:var(--muted)}
+.kpi.warn b{color:var(--crit)}
+
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;min-width:0}
+.card > .eyebrow{color:var(--muted);display:block;margin-bottom:12px}
+.card h4{margin:0 0 4px;font-size:15px}
+.legend{display:flex;flex-direction:column;gap:8px;min-width:0}
+.legend .row{display:flex;align-items:center;gap:8px;font-size:13px}
+.legend .sw{width:10px;height:10px;border-radius:3px;flex:none}
+.legend .row b{margin-left:auto;font-variant-numeric:tabular-nums}
+.donutbox{display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+.donutbox svg{width:140px;height:140px;flex:none}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.bar .track{height:10px;background:var(--neutral-bg);border-radius:6px;overflow:hidden}
+.bar .fill{height:100%;border-radius:6px}
+
+/* Tables */
+.tablebox{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tablebox .head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+.tablebox .head .eyebrow{color:var(--muted)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--navy);padding:10px 12px;white-space:nowrap;font-weight:600}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:nth-child(4n+1) td,tbody tr.zebra td{background:transparent}
+tbody tr.alt td{background:var(--cream)}
+tr.clickable{cursor:pointer}
+tr.clickable:hover td{background:color-mix(in srgb,var(--gold) 12%,var(--panel))}
+tr.spec td{background:var(--cream);color:var(--muted);font-size:12.5px}
+td.nowrap{white-space:nowrap}
+.select{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font:inherit;font-size:13px}
+
+.pill{display:inline-flex;align-items:center;gap:6px;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.p-crit{background:var(--crit-bg);color:var(--crit)} .p-alto{background:var(--alto-bg);color:var(--alto)}
+.p-medio{background:var(--medio-bg);color:var(--medio)} .p-ok{background:var(--ok-bg);color:var(--ok)}
+.p-info{background:var(--info-bg);color:var(--info)} .p-neutral{background:var(--neutral-bg);color:var(--muted)}
+
+/* Occurrences */
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:12.5px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+.occ-list{display:flex;flex-direction:column;gap:12px}
+.occ{background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--muted);border-radius:var(--r);padding:16px 18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.occ.r-crit{border-left-color:var(--crit)} .occ.r-alto{border-left-color:var(--alto)} .occ.r-medio{border-left-color:var(--medio)}
+.occ-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.occ-top .id{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.occ h4{margin:0;font-size:15.5px;line-height:1.35;overflow-wrap:anywhere}
+.occ .sub{font-size:12.5px;color:var(--muted)}
+.occ p{margin:0;max-width:78ch}
+.occ dl{display:grid;grid-template-columns:170px minmax(0,1fr);gap:6px 14px;margin:0;font-size:13px;padding-top:10px;border-top:1px dashed var(--line)}
+.occ dt{color:var(--muted)}
+.occ dd{margin:0;overflow-wrap:anywhere}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:var(--r);padding:28px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--fg);font-size:15px;margin-bottom:4px}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.shot{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.shot-img{display:block;padding:0;border:0;border-bottom:1px solid var(--line);background:var(--neutral-bg);cursor:zoom-in}
+.shot-img img{display:block;width:100%;height:auto;aspect-ratio:1229/666;object-fit:cover;object-position:top}
+.shot figcaption{padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.shot figcaption p{margin:0;font-size:13px}
+.lightbox{position:fixed;inset:0;z-index:60;background:rgba(6,12,24,.86);display:grid;place-items:center;padding:calc(16px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.lb-inner{max-width:min(1229px,100%);display:flex;flex-direction:column;gap:10px}
+.lb-inner img{max-width:100%;max-height:80vh;border-radius:8px;display:block;margin:0 auto}
+.lb-cap{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#E9EEF7;font-size:13px;flex-wrap:wrap}
+.prose{max-width:76ch}
+.prose h4{margin:18px 0 6px;font-size:15px}
+.prose h4:first-child{margin-top:0}
+.prose p,.prose li{color:var(--fg)}
+.prose ul{padding-left:18px;margin:6px 0}
+.note{font-size:12.5px;color:var(--muted)}
+.brandlink{background:none;border:0;padding:0;color:var(--info);font-weight:600;cursor:pointer;text-align:left}
+.brandlink:hover{text-decoration:underline}
+
+@media (max-width:1000px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:static;height:auto;padding:16px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px))}
+  .side-foot .who{display:none}
+  .nav{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px}
+  .nav .eyebrow{display:none}
+  .nav button{width:auto;white-space:nowrap;flex:none}
+  .side-foot{flex-direction:row;flex-wrap:wrap;align-items:center;padding-top:10px}
+  .main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .cockpit h3{font-size:24px}
+  .occ dl{grid-template-columns:minmax(0,1fr)}
+  .occ dt{margin-top:4px}
+}
+@media (prefers-reduced-motion:no-preference){.view{animation:fade .25s ease}@keyframes fade{from{opacity:.4}to{opacity:1}}}
+</style>
+
+</head>
+<body>
+<div class="lock" id="lock">
+  <form class="lock-card" id="lockForm" autocomplete="off">
+    <div class="lock-brand"><img class="mark" src="__AVATAR__" alt="Fevereiro &amp; Cruz"><div><b>Fevereiro &amp; Cruz</b><span>Propriedade Intelectual e Direito Empresarial</span></div></div>
+    <h1>Painel de Proteção de Marcas</h1>
+    <p>__CLIENTE__ · área restrita. Digite o código de acesso fornecido pelo escritório.</p>
+    <label for="pin">Código de acesso</label>
+    <input id="pin" name="pin" type="password" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+    <button class="btn-primary" id="unlockBtn" type="submit">Acessar painel</button>
+    <div class="err" id="err" role="alert"></div>
+    <p class="fine">Painel confidencial, de uso exclusivo do cliente. O conteúdo permanece criptografado até que o código correto seja informado. Não compartilhe o código.</p>
+  </form>
+</div>
+
+<div class="app" id="app" hidden>
+  <aside class="side">
+    <div class="side-brand"><img class="mark" src="__AVATAR__" alt="Fevereiro &amp; Cruz"><div><b>Fevereiro &amp; Cruz</b><span>Painel do cliente</span></div></div>
+    <div class="portfolio">
+      <label class="eyebrow" for="brandSel">Portfólio ativo</label>
+      <select id="brandSel"></select>
+      <div class="tit" id="brandTit"></div>
+    </div>
+    <nav class="nav" id="nav" aria-label="Seções do painel"></nav>
+    <div class="side-foot">
+      <div class="who"><b>Disponibilizado por Fevereiro &amp; Cruz</b>Varredura digital em <span id="fVarr"></span><br>Carteira INPI conforme planilha do escritório, atualizada em <span id="fCart"></span></div>
+      <button class="btn-ghost" id="lockBtn" type="button">Bloquear painel</button>
+    </div>
+  </aside>
+  <main class="main"><div class="wrap" id="view"></div></main>
+</div>
+
+<script type="application/json" id="payload">__PAYLOAD__</script>
+<script>
+(function(){
+"use strict";
+const P = JSON.parse(document.getElementById('payload').textContent);
+let D = null;
+const state = { brand:'all', view:'resumo', riskFilter:'Todos', statusFilter:'Todos', provaOcc:null };
+
+/* ---------- helpers ---------- */
+function el(tag, attrs, ...kids){
+  const n=document.createElement(tag);
+  if(attrs) for(const [k,v] of Object.entries(attrs)){
+    if(v==null||v===false) continue;
+    if(k==='class') n.className=v;
+    else if(k==='text') n.textContent=v;
+    else if(k.startsWith('on')) n.addEventListener(k.slice(2),v);
+    else n.setAttribute(k,v===true?'':v);
+  }
+  for(const k of kids.flat()){ if(k==null||k===false) continue; n.append(k.nodeType?k:document.createTextNode(String(k))); }
+  return n;
+}
+const svgEl=(t,a)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)n.setAttribute(k,a[k]);return n;};
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const brDate=iso=>/^\d{4}-\d{2}-\d{2}$/.test(iso)?iso.split('-').reverse().join('/'):(iso||'—');
+const cap=s=>{s=(s||'').toLowerCase();return s.charAt(0).toUpperCase()+s.slice(1);};
+const TODAY=new Date();
+
+/* ---------- unlock ---------- */
+async function decrypt(pin){
+  const enc=new TextEncoder();
+  const base=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(P.salt),iterations:P.it,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(P.iv)},key,b64(P.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+const form=document.getElementById('lockForm'), pinIn=document.getElementById('pin'), err=document.getElementById('err'), btn=document.getElementById('unlockBtn');
+pinIn.addEventListener('input',()=>{pinIn.value=pinIn.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);err.textContent='';});
+form.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const pin=pinIn.value.trim();
+  if(!/^[A-Z0-9]{10}$/.test(pin)){err.textContent='O código tem 10 caracteres, entre letras e números.';return;}
+  btn.disabled=true; btn.textContent='Verificando…'; err.textContent='';
+  try{
+    D=await decrypt(pin);
+    document.getElementById('lock').hidden=true;
+    document.getElementById('app').hidden=false;
+    pinIn.value='';
+    boot();
+  }catch(x){
+    err.textContent= window.crypto&&crypto.subtle ? 'Código incorreto. Confira o código enviado pelo escritório e tente novamente.' : 'Este navegador não permite abrir o painel. Tente em outro navegador atualizado.';
+  }finally{btn.disabled=false;btn.textContent='Acessar painel';}
+});
+document.getElementById('lockBtn').addEventListener('click',()=>{ D=null; document.getElementById('view').replaceChildren(); document.getElementById('app').hidden=true; document.getElementById('lock').hidden=false; pinIn.focus(); });
+setTimeout(()=>{try{pinIn.focus({preventScroll:true});}catch(_){}} ,50);
+
+/* ---------- domain ---------- */
+function procCat(st){
+  st=st.toUpperCase();
+  if(st.startsWith('CONCEDIDO')||st.startsWith('PRORROGADO')) return 'vigor';
+  if(st.startsWith('ARQUIVADO')||st.startsWith('PEDIDO INDEFERIDO')) return 'encerrado';
+  return 'andamento';
+}
+const CAT={vigor:['Em vigor','p-ok'],andamento:['Em andamento','p-info'],encerrado:['Encerrado','p-neutral']};
+const RISK={'Crítico':'p-crit','Alto':'p-alto','Médio':'p-medio','Baixo':'p-ok'};
+const RISKC={'Crítico':'r-crit','Alto':'r-alto','Médio':'r-medio'};
+const OSTAT={'Identificado':'p-neutral','Denunciado':'p-info','Notificado':'p-info','Removido':'p-ok','Em litígio':'p-alto','Arquivado':'p-neutral'};
+function notifStatus(n){
+  if(n.concluida) return ['Concluída','p-ok'];
+  const m=n.momento.toUpperCase();
+  if(m.includes('CONTRANOTIFICA')) return ['Contranotificação recebida','p-alto'];
+  if(m.includes('RÉPLICA')) return ['Réplica enviada','p-info'];
+  if(m.includes('ELABORADA')) return ['Elaborada, a enviar','p-medio'];
+  if(m.includes('ENVIADA')) return ['Enviada','p-info'];
+  return ['Em preparação','p-neutral'];
+}
+const fam=id=>D.families.find(f=>f.id===id);
+const inScope=f=>state.brand==='all'||f===state.brand;
+const procs=()=>D.procs.filter(p=>inScope(p.f));
+const occs=()=>D.occ.filter(o=>state.brand==='all'||o.f.includes(state.brand));
+const notifs=()=>D.notifs.filter(n=>inScope(n.f));
+const provas=()=>D.provas.filter(p=>state.brand==='all'||p.f.includes(state.brand));
+const titulares=f=>[...new Set(D.procs.filter(p=>p.f===f).map(p=>p.tit))];
+const monitored=()=>state.brand==='all'?D.families.some(f=>f.monitorada):fam(state.brand).monitorada;
+function vigNext12(p){ if(!/^\d{4}-/.test(p.vig))return false; const d=new Date(p.vig+'T12:00:00-03:00'); return d>=TODAY && (d-TODAY)<=366*864e5; }
+
+/* ---------- shell ---------- */
+const VIEWS=[
+  ['resumo','Resumo','Visão geral'],
+  ['carteira','Marcas','Carteira'],
+  ['monitoramento','Monitoramento digital','Vigilância de marca'],
+  ['notificacoes','Notificações','Vigilância de marca'],
+  ['provas','Provas','Vigilância de marca'],
+  ['plano','Plano de ação','Providências'],
+  ['metodologia','Metodologia e fontes','Providências'],
+];
+function boot(){
+  document.getElementById('fVarr').textContent=D.varredura.split(',')[0];
+  document.getElementById('fCart').textContent=D.carteiraAtualizada;
+  const sel=document.getElementById('brandSel');
+  sel.replaceChildren(el('option',{value:'all'},'Grupo Shark · todas as marcas'),...D.families.map(f=>el('option',{value:f.id},f.nome)));
+  sel.value=state.brand;
+  sel.onchange=()=>{state.brand=sel.value;state.riskFilter='Todos';state.statusFilter='Todos';render();};
+  const h=(location.hash||'').slice(1); if(VIEWS.some(v=>v[0]===h)) state.view=h;
+  window.addEventListener('hashchange',()=>{const k=location.hash.slice(1);if(D&&VIEWS.some(v=>v[0]===k)){state.view=k;render();}});
+  render();
+}
+function go(view){ state.view=view; try{history.replaceState(null,'','#'+view);}catch(_){location.hash=view;} render(); document.querySelector('.main').scrollTop=0; window.scrollTo({top:0}); }
+function pickBrand(id,view){ state.brand=id; document.getElementById('brandSel').value=id; state.riskFilter='Todos'; state.statusFilter='Todos'; go(view||state.view); }
+
+function renderNav(){
+  const nav=document.getElementById('nav'); nav.replaceChildren();
+  const o=occs(), n=notifs();
+  const counts={carteira:procs().length,monitoramento:o.length,notificacoes:n.filter(x=>!x.concluida).length,provas:provas().length};
+  let group='';
+  for(const [id,label,grp] of VIEWS){
+    if(grp!==group){ nav.append(el('div',{class:'eyebrow'},grp)); group=grp; }
+    const c=counts[id];
+    const hot=id==='monitoramento'&&o.some(x=>x.risco==='Crítico');
+    nav.append(el('button',{type:'button','aria-current':state.view===id?'page':null,onclick:()=>go(id)},
+      el('span',null,label), c!=null?el('span',{class:'count'+(hot?' hot':'')},String(c)):null));
+  }
+  const tit=document.getElementById('brandTit');
+  tit.textContent= state.brand==='all' ? `${D.families.length} marcas · ${new Set(D.procs.map(p=>p.tit)).size} empresas titulares` : titulares(state.brand).join(' · ');
+}
+function brandName(){ return state.brand==='all'?'Grupo Shark':fam(state.brand).nome; }
+function topline(eyebrow,title){
+  return el('div',{class:'topline'},el('div',null,el('div',{class:'eyebrow'},eyebrow),el('h2',null,title)),el('div',{class:'stamp'},'Atualizado em '+D.atualizado));
+}
+function render(){
+  if(!D) return;
+  renderNav();
+  const v=document.getElementById('view'); v.replaceChildren();
+  const box=el('div',{class:'view wrap',style:'max-width:none'});
+  ({resumo:vResumo,carteira:vCarteira,monitoramento:vMonit,notificacoes:vNotif,provas:vProvas,plano:vPlano,metodologia:vMetod})[state.view](box);
+  v.append(box);
+}
+
+/* ---------- Resumo ---------- */
+function critAlert(box){
+  const crit=occs().filter(o=>o.risco==='Crítico');
+  if(!crit.length) return;
+  const o=crit[0];
+  box.append(el('div',{class:'alert',role:'status'},el('span',{class:'dot'}),
+    el('div',null,el('b',null,crit.length===1?'1 ocorrência crítica em andamento':`${crit.length} ocorrências críticas em andamento`),
+      el('p',null,`${o.id}: ${o.tipo.toLowerCase()} usando a marca ${o.f.map(x=>fam(x).nome.toUpperCase()).join(' e ')} (${o.ident}). ${o.status==='Identificado'?'Ocorrência nova, em análise pelo escritório.':'Providências em andamento pelo escritório.'} Recomendamos que sua equipe informe aos clientes apenas os canais oficiais.`),
+      el('button',{type:'button',onclick:()=>{state.riskFilter='Crítico';go('monitoramento');}},'Ver ocorrência'))));
+}
+function vResumo(box){
+  const ps=procs(), os=occs(), ns=notifs();
+  const c={vigor:0,andamento:0,encerrado:0}; ps.forEach(p=>c[procCat(p.st)]++);
+  box.append(topline('Visão geral','Resumo'));
+  box.append(el('section',{class:'cockpit'},
+    el('div',null,el('div',{class:'eyebrow'},'Cockpit de marcas'),el('h3',null,brandName()),
+      el('p',null,state.brand==='all'?'Carteira de marcas no INPI e vigilância digital das empresas do grupo, em um só lugar.':`Titular: ${titulares(state.brand).join(' · ')}`)),
+    el('div',{class:'meta'},
+      el('div',null,el('b',{class:'num'},String(ps.length)),el('span',null,'Processos')),
+      el('div',null,el('b',{class:'num'},String(c.vigor)),el('span',null,'Em vigor')),
+      el('div',null,el('b',{class:'num'},String(os.length)),el('span',null,'Ocorrências digitais')))));
+  critAlert(box);
+  const ca=os.filter(o=>o.risco==='Crítico'||o.risco==='Alto').length;
+  const nOpen=ns.filter(n=>!n.concluida).length;
+  const v12=ps.filter(vigNext12).length;
+  box.append(el('div',{class:'kpis'},
+    kpi('Em andamento',c.andamento,'Prorrogações, recursos e pedidos'),
+    kpi('Vigências em 12 meses',v12,'Registros a prorrogar nos próximos 12 meses'),
+    kpi('Críticas e altas',ca,monitored()?'Ocorrências digitais prioritárias':'Monitoramento em atualização',ca>0),
+    kpi('Notificações em curso',nOpen,`${ns.filter(n=>n.concluida).length} concluídas`)));
+  // charts
+  const g=el('div',{class:'grid2'});
+  g.append(el('div',{class:'card'},el('span',{class:'eyebrow'},'Carteira por situação'),donut([
+    ['Em vigor',c.vigor,'var(--ok)'],['Em andamento',c.andamento,'var(--info)'],['Encerrados',c.encerrado,'var(--muted)']],ps.length,'processos')));
+  const rc=['Crítico','Alto','Médio','Baixo'].map(r=>[r,os.filter(o=>o.risco===r).length]);
+  const max=Math.max(1,...rc.map(x=>x[1]));
+  const col={'Crítico':'var(--crit)','Alto':'var(--alto)','Médio':'var(--medio)','Baixo':'var(--ok)'};
+  g.append(el('div',{class:'card'},el('span',{class:'eyebrow'},'Ocorrências digitais por risco'),
+    monitored()? el('div',{class:'bars'},rc.map(([r,n])=>el('div',{class:'bar'},el('div',{class:'lab'},el('span',null,r),el('b',{class:'num'},String(n))),el('div',{class:'track'},el('div',{class:'fill',style:`width:${n/max*100}%;background:${col[r]}`})))))
+    : el('div',{class:'empty'},el('b',null,'Monitoramento digital em atualização'),'A varredura desta marca está em andamento e os resultados aparecem aqui assim que concluídos.')));
+  box.append(g);
+  if(state.brand==='all') box.append(brandTable());
+}
+function kpi(label,val,sub,warn){return el('div',{class:'kpi'+(warn?' warn':'')},el('div',{class:'eyebrow'},label),el('b',{class:'num'},String(val)),el('span',null,sub));}
+function donut(parts,total,unit){
+  const s=svgEl('svg',{viewBox:'0 0 120 120',role:'img','aria-label':parts.map(p=>`${p[0]}: ${p[1]}`).join(', ')});
+  const r=46,C=2*Math.PI*r; let off=0;
+  s.append(svgEl('circle',{cx:60,cy:60,r,fill:'none',stroke:'var(--neutral-bg)','stroke-width':16}));
+  for(const [,n,colr] of parts){ if(!n) continue; const len=n/Math.max(1,total)*C;
+    s.append(svgEl('circle',{cx:60,cy:60,r,fill:'none',stroke:colr,'stroke-width':16,'stroke-dasharray':`${len} ${C-len}`,'stroke-dashoffset':String(-off),transform:'rotate(-90 60 60)'})); off+=len; }
+  const t1=svgEl('text',{x:60,y:60,'text-anchor':'middle','font-size':26,'font-weight':600,fill:'var(--fg)','font-family':'Fraunces, Georgia, serif'}); t1.textContent=String(total);
+  const t2=svgEl('text',{x:60,y:78,'text-anchor':'middle','font-size':9,'letter-spacing':'1.5',fill:'var(--muted)'}); t2.textContent=unit.toUpperCase();
+  s.append(t1,t2);
+  return el('div',{class:'donutbox'},s,el('div',{class:'legend',style:'flex:1'},parts.map(([l,n,colr])=>el('div',{class:'row'},el('span',{class:'sw',style:`background:${colr}`}),el('span',null,l),el('b',null,`${n} · ${total?Math.round(n/total*100):0}%`)))));
+}
+function brandTable(){
+  const rows=D.families.map(f=>{
+    const ps=D.procs.filter(p=>p.f===f.id), os=D.occ.filter(o=>o.f.includes(f.id)), ns=D.notifs.filter(n=>n.f===f.id);
+    return {f,ps,os,ns};
+  });
+  const tb=el('tbody');
+  rows.forEach((r,i)=>{
+    const worst=['Crítico','Alto','Médio','Baixo'].find(k=>r.os.some(o=>o.risco===k));
+    tb.append(el('tr',{class:i%2?'alt':null},
+      el('td',null,el('button',{class:'brandlink',type:'button',onclick:()=>pickBrand(r.f.id,'resumo')},r.f.nome)),
+      el('td',null,[...new Set(r.ps.map(p=>p.tit))].join(' · ')),
+      el('td',{class:'num'},String(r.ps.length)),
+      el('td',{class:'num'},String(r.ps.filter(p=>procCat(p.st)==='vigor').length)),
+      el('td',null, r.f.monitorada ? (r.os.length? el('span',{class:'pill '+RISK[worst]},`${r.os.length} · maior risco ${worst.toLowerCase()}`) : el('span',{class:'pill p-ok'},'Sem ocorrências')) : el('span',{class:'pill p-info'},'Atualizando')),
+      el('td',{class:'num'},String(r.ns.length))));
+  });
+  return el('div',{class:'tablebox'},el('div',{class:'head'},el('span',{class:'eyebrow'},'Marcas do grupo')),
+    el('div',{class:'scroll'},el('table',null,el('thead',null,el('tr',null,['Marca','Titular','Processos','Em vigor','Monitoramento digital','Notificações'].map(h=>el('th',{scope:'col'},h)))),tb)));
+}
+
+/* ---------- Carteira ---------- */
+function vCarteira(box){
+  box.append(topline('Carteira','Marcas no INPI'));
+  const ps=procs();
+  const c={vigor:0,andamento:0,encerrado:0}; ps.forEach(p=>c[procCat(p.st)]++);
+  box.append(el('div',{class:'kpis'},kpi('Processos',ps.length,brandName()),kpi('Em vigor',c.vigor,'Concedidos e prorrogados'),kpi('Em andamento',c.andamento,'Prorrogação, recurso ou oposição'),kpi('Encerrados',c.encerrado,'Arquivados ou não deferidos')));
+  const sel=el('select',{class:'select',id:'stFilter','aria-label':'Filtrar por situação',onchange:e=>{state.statusFilter=e.target.value;render();}},
+    ['Todos','Em vigor','Em andamento','Encerrado'].map(o=>el('option',{value:o},o==='Todos'?'Todas as situações':o)));
+  sel.value=state.statusFilter;
+  const list=ps.filter(p=>state.statusFilter==='Todos'||CAT[procCat(p.st)][0]===state.statusFilter)
+    .sort((a,b)=>a.f.localeCompare(b.f)||a.marca.localeCompare(b.marca)||a.cls-b.cls);
+  const tb=el('tbody');
+  list.forEach((p,i)=>{
+    const [lab,cls]=CAT[procCat(p.st)];
+    const spec=el('tr',{class:'spec',hidden:true},el('td',{colspan:8},el('b',null,'Especificação: '),p.esp||'—'));
+    const tr=el('tr',{class:'clickable'+(i%2?' alt':''),tabindex:0,title:'Mostrar especificação',onclick:()=>{spec.hidden=!spec.hidden;},onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();spec.hidden=!spec.hidden;}}},
+      el('td',{class:'mono nowrap'},p.n),
+      el('td',null,el('b',null,p.marca)),
+      el('td',null,p.tit),
+      el('td',null,p.apr),
+      el('td',{class:'num'},p.cls),
+      el('td',{class:'nowrap num'},brDate(p.dep)),
+      el('td',null,el('div',null,el('span',{class:'pill '+cls},lab)),el('div',{class:'note',style:'margin-top:4px'},cap(p.st))),
+      el('td',{class:'nowrap num'},brDate(p.vig)));
+    tb.append(tr,spec);
+  });
+  box.append(el('div',{class:'tablebox'},
+    el('div',{class:'head'},el('span',{class:'eyebrow'},`${list.length} processos · toque na linha para ver a especificação`),sel),
+    el('div',{class:'scroll'},el('table',null,el('thead',null,el('tr',null,['Nº processo','Marca','Titular','Apresentação','Classe NCL','Depósito','Situação','Vigência'].map(h=>el('th',{scope:'col'},h)))),tb))));
+  box.append(el('p',{class:'note'},`Fonte: relação de processos do escritório (atualizada em ${D.carteiraAtualizada}). NCL é a Classificação Internacional de Nice, que define o ramo de produtos ou serviços protegido.`));
+}
+
+/* ---------- Monitoramento ---------- */
+function vMonit(box){
+  box.append(topline('Vigilância de marca','Monitoramento digital'));
+  if(!monitored()){
+    box.append(el('div',{class:'empty'},el('b',null,`Monitoramento digital de ${brandName()} em atualização`),'A varredura desta marca está em andamento. Os resultados aparecem aqui assim que concluídos.'));
+    return;
+  }
+  critAlert(box);
+  const os=occs();
+  const by=r=>os.filter(o=>o.risco===r).length;
+  box.append(el('div',{class:'kpis'},kpi('Ocorrências',os.length,`Varredura de ${D.varredura.split(',')[0]}`),kpi('Críticas',by('Crítico'),'Golpe ativo contra consumidores',by('Crítico')>0),kpi('Altas',by('Alto'),'Perfis falsos e domínio em uso'),kpi('Denúncias abertas',os.filter(o=>o.status==='Denunciado').length,`${os.filter(o=>o.notif).length} também notificadas`)));
+  const chips=el('div',{class:'chips',role:'group','aria-label':'Filtrar por risco'},['Todos','Crítico','Alto','Médio'].map(r=>el('button',{type:'button',class:'chip','aria-pressed':String(state.riskFilter===r),onclick:()=>{state.riskFilter=r;render();}},r==='Todos'?'Todos os riscos':r)));
+  box.append(chips);
+  const order={'Crítico':0,'Alto':1,'Médio':2,'Baixo':3};
+  const list=os.filter(o=>state.riskFilter==='Todos'||o.risco===state.riskFilter).sort((a,b)=>order[a.risco]-order[b.risco]||a.id.localeCompare(b.id));
+  const L=el('div',{class:'occ-list'});
+  for(const o of list){
+    const n=o.notif?D.notifs.find(x=>x.ref===o.notif):null;
+    L.append(el('article',{class:'occ '+(RISKC[o.risco]||''),id:o.id},
+      el('div',{class:'occ-top'},el('span',{class:'id'},o.id),el('span',{class:'pill '+RISK[o.risco]},o.risco),el('span',{class:'pill '+(OSTAT[o.status]||'p-neutral')},o.status),
+        el('span',{class:'sub'},`${o.tipo} · ${o.plat}`)),
+      el('h4',null,o.ident),
+      el('p',null,o.desc),
+      el('dl',null,
+        el('dt',null,'Marca afetada'),el('dd',null,o.f.map(x=>fam(x).nome).join(' e ')),
+        el('dt',null,'Responsável aparente'),el('dd',null,o.resp),
+        el('dt',null,'Constatação'),el('dd',null,D.varredura),
+        el('dt',null,'Endereço'),el('dd',null,o.url?el('a',{href:o.url,target:'_blank',rel:'noopener noreferrer'},o.url):'Não acessado na varredura'),
+        el('dt',null,'Provas'),el('dd',null,(()=>{const pv=D.provas.filter(x=>x.occ.includes(o.id));return pv.length?el('button',{type:'button',class:'brandlink',onclick:()=>{state.provaOcc=o.id;go('provas');}},`${pv.length} ${pv.length>1?'capturas':'captura'} de tela`):'Endereço sem conteúdo no momento da captura';})()),
+        el('dt',null,'Notificação'),el('dd',null,n?`Ref. ${n.ref}, enviada em ${n.envio}. ${n.hist}`:'Ainda não enviada'),
+        el('dt',null,'Providências adotadas'),el('dd',null,o.acoes),
+        el('dt',null,'Próximo passo'),el('dd',null,o.proximo))));
+  }
+  box.append(L);
+  box.append(el('p',{class:'note'},'A varredura retrata o momento da consulta: anúncios e perfis podem mudar ou sair do ar a qualquer momento. Conteúdo fechado (stories, grupos, perfis privados e conversas de WhatsApp) não é coberto.'));
+}
+
+/* ---------- Notificações ---------- */
+function vNotif(box){
+  box.append(topline('Vigilância de marca','Notificações'));
+  const ns=notifs();
+  const st=ns.map(notifStatus);
+  box.append(el('div',{class:'kpis'},
+    kpi('Notificações',ns.length,brandName()),
+    kpi('Aguardando resposta',st.filter(s=>s[0]==='Enviada').length,'Enviadas, sem retorno formal'),
+    kpi('Em negociação',st.filter(s=>s[0]==='Contranotificação recebida'||s[0]==='Réplica enviada').length,'Contranotificação ou réplica'),
+    kpi('Concluídas',st.filter(s=>s[0]==='Concluída').length,'Conflito resolvido')));
+  if(!ns.length){ box.append(el('div',{class:'empty'},el('b',null,`Nenhuma notificação registrada para ${brandName()}`),'Quando o escritório enviar uma notificação em nome desta marca, ela aparece aqui com o andamento.')); return; }
+  const tb=el('tbody');
+  ns.sort((a,b)=>(b.envio||'').split('/').reverse().join('').localeCompare((a.envio||'').split('/').reverse().join(''))).forEach((n,i)=>{
+    const [lab,cls]=notifStatus(n);
+    tb.append(el('tr',{class:i%2?'alt':null},
+      el('td',{class:'mono nowrap'},n.ref||'—'),
+      el('td',{class:'nowrap num'},n.envio||'—'),
+      state.brand==='all'?el('td',null,fam(n.f).nome):null,
+      el('td',null,el('b',null,n.notificado),n.cnpjNot&&n.cnpjNot.trim()?el('div',{class:'note mono'},`CNPJ ${n.cnpjNot}`):null,
+        n.sites.length?el('div',{class:'note',style:'overflow-wrap:anywhere'},n.sites.join(' · ')):null),
+      el('td',null,n.origem),
+      el('td',null,el('span',{class:'pill '+cls},lab)),
+      el('td',{style:'min-width:260px'},n.hist||'—')));
+  });
+  const heads=['Ref.','Envio',state.brand==='all'?'Marca':null,'Notificado','Motivo','Situação','Andamento'].filter(Boolean);
+  box.append(el('div',{class:'tablebox'},el('div',{class:'head'},el('span',{class:'eyebrow'},'Notificações extrajudiciais enviadas em nome do grupo')),
+    el('div',{class:'scroll'},el('table',null,el('thead',null,el('tr',null,heads.map(h=>el('th',{scope:'col'},h)))),tb))));
+  box.append(el('p',{class:'note'},'Fonte: controle de notificações do escritório, atualizado em '+D.atualizado.split(',')[0]+'. “Contranotificação” é a resposta formal da parte notificada; “réplica” é a resposta do escritório a ela.'));
+}
+
+
+/* ---------- Provas ---------- */
+function vProvas(box){
+  box.append(topline('Vigilância de marca','Provas'));
+  if(!monitored()){ box.append(el('div',{class:'empty'},el('b',null,`Provas de ${brandName()} em atualização`),'As capturas aparecem aqui assim que a varredura desta marca for concluída.')); return; }
+  let ps=provas();
+  const occIds=[...new Set(ps.flatMap(p=>p.occ))].filter(id=>occs().some(o=>o.id===id)).sort();
+  if(state.provaOcc&&!occIds.includes(state.provaOcc)) state.provaOcc=null;
+  box.append(el('p',{class:'note',style:'margin:0'},'Capturas de tela feitas pelo escritório durante a varredura, com o endereço e o horário de cada uma (horário de Brasília). As provas formais, com registro técnico, ficam arquivadas no escritório.'));
+  box.append(el('div',{class:'chips',role:'group','aria-label':'Filtrar por ocorrência'},
+    el('button',{type:'button',class:'chip','aria-pressed':String(!state.provaOcc),onclick:()=>{state.provaOcc=null;render();}},'Todas'),
+    occIds.map(id=>el('button',{type:'button',class:'chip mono','aria-pressed':String(state.provaOcc===id),onclick:()=>{state.provaOcc=id;render();}},id))));
+  if(state.provaOcc) ps=ps.filter(p=>p.occ.includes(state.provaOcc));
+  const g=el('div',{class:'gallery'});
+  ps.forEach(p=>{
+    const o=D.occ.find(x=>x.id===p.occ[0]);
+    g.append(el('figure',{class:'shot'},
+      el('button',{type:'button',class:'shot-img','aria-label':'Ampliar captura '+p.id,onclick:()=>openLight(p)},el('img',{src:p.img,alt:p.cap,loading:'lazy',width:p.w,height:p.h})),
+      el('figcaption',null,
+        el('div',{class:'occ-top'},el('span',{class:'id'},p.id),p.occ.length===1&&o?el('span',{class:'pill '+RISK[o.risco]},`${p.occ[0]} · ${o.risco}`):el('span',{class:'pill p-neutral'},p.occ.join(' · '))),
+        el('p',null,p.cap),
+        el('div',{class:'note'},`Capturado em ${p.quando}`),
+        el('a',{class:'note',href:p.url,target:'_blank',rel:'noopener noreferrer',style:'overflow-wrap:anywhere'},p.url))));
+  });
+  box.append(g);
+  const miss=occs().filter(o=>!D.provas.some(p=>p.occ.includes(o.id)));
+  if(miss.length&&!state.provaOcc) box.append(el('p',{class:'note'},`${miss.map(o=>o.id).join(', ')}: endereço sem conteúdo no momento da captura; a ocorrência segue registrada pela consulta ao verificador de sites e acompanhada nas próximas varreduras.`));
+}
+function openLight(p){
+  const lb=el('div',{class:'lightbox',role:'dialog','aria-modal':'true','aria-label':p.cap,onclick:e=>{if(e.target===lb)close();}},
+    el('div',{class:'lb-inner'},el('img',{src:p.img,alt:p.cap}),
+      el('div',{class:'lb-cap'},el('span',null,`${p.id} · ${p.cap} · ${p.quando}`),el('button',{type:'button',class:'btn-primary',onclick:()=>close()},'Fechar'))));
+  function close(){lb.remove();document.removeEventListener('keydown',esc);}
+  function esc(e){if(e.key==='Escape')close();}
+  document.addEventListener('keydown',esc);
+  document.body.append(lb); lb.querySelector('button').focus();
+}
+
+/* ---------- Plano ---------- */
+function vPlano(box){
+  box.append(topline('Providências','Plano de ação'));
+  const ids=new Set(occs().map(o=>o.id));
+  const items=D.plano.filter(p=>state.brand==='all'||p.occ.length===0||p.occ.some(x=>ids.has(x)));
+  if(!monitored()){ box.append(el('div',{class:'empty'},el('b',null,`Sem providências digitais pendentes para ${brandName()}`),'O plano de ação desta marca será montado após a primeira varredura.')); return; }
+  const tb=el('tbody');
+  items.forEach((p,i)=>tb.append(el('tr',{class:i%2?'alt':null},
+    el('td',null,el('b',null,p.p),p.occ.length?el('div',{class:'note mono'},p.occ.join(' · ')):null),
+    el('td',null,p.f),
+    el('td',null,el('span',{class:'pill '+RISK[p.prio]},p.prio)),
+    el('td',{class:'nowrap'},p.prazo),
+    el('td',null,p.resp),
+    el('td',null,el('span',{class:'pill '+({'Concluída':'p-ok','Em andamento':'p-info'}[p.sit]||'p-medio')},p.sit)))));
+  box.append(el('div',{class:'tablebox'},el('div',{class:'head'},el('span',{class:'eyebrow'},'Providências adotadas e próximas etapas')),
+    el('div',{class:'scroll'},el('table',null,el('thead',null,el('tr',null,['Providência','Fundamento','Prioridade','Prazo','Responsável','Situação'].map(h=>el('th',{scope:'col'},h)))),tb))));
+  box.append(el('p',{class:'note'},'LPI é a Lei de Propriedade Industrial (Lei 9.279/96). Prazos contados a partir de 27/10/2026.'));
+}
+
+/* ---------- Metodologia ---------- */
+function vMetod(box){
+  box.append(topline('Providências','Metodologia e fontes'));
+  const c=el('div',{class:'card prose'});
+  c.append(
+    el('h4',null,'Escopo desta etapa'),
+    el('p',null,'Monitoramento digital das marcas SHARK TRATORES, SHARK DISTRIBUIDORA e AGROTRATOR. As demais marcas do grupo aparecem com a carteira do INPI e entram nas próximas varreduras.'),
+    el('h4',null,'Data e horário da consulta'),
+    el('p',null,D.varredura+'.'),
+    el('h4',null,'Termos pesquisados'),
+    el('p',null,'“shark tratores”, “grupo shark”, “shark máquinas”, “agrotrator” e variações, além de termos típicos dos anúncios fraudulentos (“basculante 4x4”, “correntistas Bradesco”).'),
+    el('h4',null,'Fontes consultadas'),
+    el('ul',null,['Biblioteca de Anúncios da Meta (Facebook e Instagram, Brasil, anúncios ativos e inativos)','Busca de páginas do Facebook','Instagram, por meio de buscador','Google, resultados orgânicos e patrocinados','Mercado Livre','Reclame Aqui','Sites oficiais das marcas, para identificar os canais legítimos'].map(t=>el('li',null,t))),
+    el('h4',null,'Fontes ainda não cobertas'),
+    el('ul',null,['Google patrocinado para “shark tratores”','Central de Transparência de Anúncios do Google','WHOIS do Registro.br e WHOIS internacional','Busca interna do Instagram'].map(t=>el('li',null,t))),
+    el('h4',null,'Classificação de risco'),
+    el('ul',null,[['Crítico','golpe ativo contra consumidores, com coleta de dados ou pagamentos em nome da empresa.'],['Alto','perfil falso, domínio idêntico ou parecido em uso, ou alcance relevante.'],['Médio','uso parcial da marca ou domínio parecido sem uso ativo verificado.'],['Baixo','menção irregular sem intenção aparente de confusão.']].map(([k,t])=>el('li',null,el('b',null,k+': '),t))),
+    el('h4',null,'Preservação de prova'),
+    el('p',null,'As provas de todas as ocorrências foram preservadas pelo escritório antes das denúncias, para que o registro continue válido mesmo que as páginas saiam do ar.'),
+    el('h4',null,'Base legal'),
+    el('p',null,'Lei de Propriedade Industrial (Lei 9.279/96), arts. 129, 130, 189, 190, 195 e 209; Marco Civil da Internet (Lei 12.965/14); Código de Defesa do Consumidor, quando há lesão a consumidores.'),
+    el('h4',null,'Confidencialidade e LGPD'),
+    el('p',null,'Painel confidencial, de uso exclusivo do Grupo Shark. Dados de terceiros aparecem apenas na medida necessária para identificar a violação e fundamentar as medidas, no exercício regular de direitos.'));
+  box.append(c);
+}
+})();
+</script>
+
+</body>
+</html>
