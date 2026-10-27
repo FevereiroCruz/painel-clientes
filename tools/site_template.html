@@ -316,7 +316,9 @@ function notifStatus(n){
   const m=n.momento.toUpperCase();
   if(m.includes('CONTRANOTIFICA')) return ['Contranotificação recebida','p-alto'];
   if(m.includes('RÉPLICA')) return ['Réplica enviada','p-info'];
-  if(m.includes('ELABORADA')) return ['Elaborada, a enviar','p-medio'];
+  if(m.includes('SEM RETORNO')) return ['Enviada, sem resposta do notificado','p-medio'];
+  if(m.includes('MONITORA')) return ['Em monitoramento','p-neutral'];
+  if(m.includes('ELABORADA')||m.includes('PENDENTE DE ENVIO')) return ['Elaborada, a enviar','p-medio'];
   if(m.includes('ENVIADA')) return ['Enviada','p-info'];
   return ['Em preparação','p-neutral'];
 }

@@ -97,6 +97,27 @@ def read_notificacoes(path, cnpj_map):
     return out
 
 
+def apply_notif_ajustes(notifs, ajustes):
+    """Ajustes vindos do Reggente (CRM do escritório), guardados no estado.
+
+    Cada ajuste tem `notificado` (trecho do nome do notificado, sem diferenciar maiúsculas) e, se quiser,
+    `ref`. Se casar com uma linha da planilha, os campos do ajuste substituem os da planilha; senão, o
+    ajuste entra como notificação nova (precisa de `f`, `marca`, `cliente`, `momento`).
+    """
+    out = [dict(n) for n in notifs]
+    for a in ajustes:
+        alvo = a['notificado'].lower()
+        hit = next((n for n in out if alvo in n['notificado'].lower() and (not a.get('refPlanilha') or n['ref'] == a['refPlanilha'])), None)
+        campos = {k: v for k, v in a.items() if k not in ('notificado', 'refPlanilha', 'fonte')}
+        if hit:
+            hit.update(campos)
+        else:
+            base = dict(ref='', envio='', cliente='', marca='', notificado=a['notificado'], cnpjNot='', sites=[],
+                        momento='SEM STATUS', hist='', concluida=False, f='', origem='Nome empresarial e marca')
+            base.update(campos); out.append(base)
+    return out
+
+
 def read_ocorrencias(path):
     """Planilha CONTROLE OCORRÊNCIAS DIGITAIS: a equipe atualiza status, preservação, denúncia e remoção."""
     if not path or not os.path.exists(path): return {}
@@ -152,6 +173,7 @@ def build_client(cfg_client, work, out_root, now):
     st = load_state(state_path, cfg_client['stateKey'])
     procs, unmapped, carteira = read_processos(os.path.join(work, cfg_client['processos']), st['famMap'])
     notifs = read_notificacoes(os.path.join(work, cfg_client['notificacoes']), st['cnpjMap'])
+    notifs = apply_notif_ajustes(notifs, st.get('notifsAjustes', []))
     rows = read_ocorrencias(os.path.join(work, cfg_client.get('ocorrencias', '')) if cfg_client.get('ocorrencias') else '')
     occ = merge_occ(st['occ'], rows, notifs)
     data = dict(atualizado=now.strftime('%d/%m/%Y, %Hh%M'), varredura=st['varredura'],
