@@ -59,6 +59,12 @@ definidas pelo escritório; a lista aparece para o cliente em Metodologia e font
 ### 2.2 Páginas e perfis
 - `https://www.facebook.com/search/pages/?q=TERMO` — páginas com o nome, logotipo ou dados do cliente
   que não sejam oficiais. Capturar página nova (topo + dados de contato).
+- **Instagram, busca interna (diária)**: com a sessão já aberta no Chrome, pesquisar os termos e as
+  variantes distintivas em `https://www.instagram.com/explore/search/keyword/?q=TERMO` e abrir os perfis
+  que usem o nome, o logotipo ou os dados do cliente e não estejam em `estado.oficiais.instagram`.
+  Capturar o topo do perfil (nome, @, seguidores, bio, contato). Só pesquisar e capturar: nunca seguir,
+  curtir, comentar, mandar mensagem ou clicar em links da bio. Se o Instagram pedir login, não digitar
+  senha: pular esta fonte e avisar o escritório.
 - Revisitar as URLs das ocorrências abertas (status diferente de Removido/Arquivado). Se a página
   saiu do ar, capturar a tela de "conteúdo indisponível" e registrar no histórico como
   "possível remoção, confirmar".
@@ -66,6 +72,18 @@ definidas pelo escritório; a lista aparece para o cliente em Metodologia e font
 ### 2.3 Google
 - `https://www.google.com.br/search?q=TERMO&hl=pt-BR&gl=br` (termos e variantes) — anúncios patrocinados de terceiros com a
   marca (brand bidding) e domínios parecidos ainda não registrados.
+- **Central de Transparência de Anúncios do Google (diária)**: `https://adstransparency.google.com/?region=BR`.
+  Ela pesquisa por anunciante ou site, não por palavra-chave. Pesquisar cada anunciante de
+  `estado.anunciantesGoogle` (já identificados em links patrocinados com as marcas) e cada site de
+  ocorrência aberta; registrar anúncios ativos que usem a marca ou as variantes, com captura. Anunciante
+  novo achado na busca do Google ou no Bing entra em `estado.anunciantesGoogle`.
+
+### 2.3.1 Bing e Yahoo (semanal, às segundas-feiras)
+- Só na rotina de segunda-feira (ou na primeira rotina da semana, se a de segunda não rodou; anotar a
+  data em `estado.ultimaBingYahoo`):
+  `https://www.bing.com/search?q=TERMO&cc=br&setlang=pt-br` e `https://br.search.yahoo.com/search?p=TERMO`,
+  com todos os termos e todas as variantes. Procurar links patrocinados ("Anúncio", "Patrocinado",
+  "Ad") de terceiros com a marca ou a variante; capturar e registrar como "Brand bidding".
 
 ### 2.4 Mercado Livre — cópia de fotos e descrições (ex.: AGROTRATOR)
 1. Abrir a loja oficial (`estado.oficiais.mercadoLivre`) e rodar `tools/ml_scan.js` (colar inteiro no
