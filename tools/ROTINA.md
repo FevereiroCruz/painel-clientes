@@ -93,8 +93,10 @@ O painel do cliente só é atualizado em `main` depois que o escritório aprova.
 pronto num ramo de revisão, que não aparece no site.
 
 0. Antes da varredura (no passo 1), verificar se existe ramo `revisao/*` ainda não aprovado
-   (`git ls-remote --heads origin 'revisao/*'`). Se existir, partir do mais recente (clonar esse ramo
-   em vez de `main`), para não perder o que já foi encontrado, e avisar que ele segue pendente.
+   (`git ls-remote --heads origin 'revisao/*'`). Um ramo só está pendente se o commit dele **não**
+   estiver em `main` (compare com `git merge-base --is-ancestor RAMO origin/main`); ramo já incorporado
+   é ignorado. Se houver pendente, partir do mais recente (clonar esse ramo em vez de `main`), para não
+   perder o que já foi encontrado, e avisar que ele segue pendente.
 1. Fechar o estado: `python3 tools/state_cli.py fechar --config CONFIG --cliente ID --entrada ESTADO.json`.
 2. `python3 tools/build_panel.py --config CONFIG --work PASTA_DAS_PLANILHAS --out .` — o relatório
    impresso mostra contagens e marcas sem correspondência (`unmapped`); marcas sem correspondência
