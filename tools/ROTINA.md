@@ -31,7 +31,16 @@ e no estado criptografado (`state/<cliente>.enc`).
 ## 2. Varrer (Claude in Chrome)
 
 Registrar a hora de início (horário de Brasília). Para cada marca monitorada (`families` com
-`monitorada: true`) e cada termo em `estado.termos[marca]`:
+`monitorada: true`), os termos de busca são `estado.termos[marca]` **mais** as palavras-chave variantes
+de `estado.variantes[marca]` (variações usadas por concorrentes e fraudadores em links patrocinados,
+definidas pelo escritório; a lista aparece para o cliente em Metodologia e fontes):
+
+- Meta (2.1) e Google (2.3): pesquisar todos os termos e todas as variantes, todos os dias. Variante com
+  mais de uma palavra vai entre aspas (`keyword_exact_phrase`).
+- Páginas do Facebook (2.2) e Mercado Livre (2.4): termos e variantes mais distintivas (as que não são
+  só o nome da marca somado a palavra genérica como "peças", "usados", "loja").
+- Uma variante só gera ocorrência quando o resultado é de terceiro (não oficial) e usa a marca ou a
+  variante para oferecer produto ou serviço do mesmo ramo, ou para golpe.
 
 ### 2.1 Biblioteca de Anúncios da Meta — ativos **e inativos**
 - `https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&q=TERMO&search_type=keyword_exact_phrase`
@@ -55,7 +64,7 @@ Registrar a hora de início (horário de Brasília). Para cada marca monitorada 
   "possível remoção, confirmar".
 
 ### 2.3 Google
-- `https://www.google.com.br/search?q=TERMO&hl=pt-BR&gl=br` — anúncios patrocinados de terceiros com a
+- `https://www.google.com.br/search?q=TERMO&hl=pt-BR&gl=br` (termos e variantes) — anúncios patrocinados de terceiros com a
   marca (brand bidding) e domínios parecidos ainda não registrados.
 
 ### 2.4 Mercado Livre — cópia de fotos e descrições (ex.: AGROTRATOR)

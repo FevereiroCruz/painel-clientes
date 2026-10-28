@@ -178,7 +178,7 @@ def build_client(cfg_client, work, out_root, now):
     occ = merge_occ(st['occ'], rows, notifs)
     data = dict(atualizado=now.strftime('%d/%m/%Y, %Hh%M'), varredura=st['varredura'],
                 carteiraAtualizada=carteira,
-                families=st['families'], procs=procs, occ=occ, plano=st['plano'], notifs=notifs, provas=st['provas'])
+                families=st['families'], variantes=st.get('variantes', {}), procs=procs, occ=occ, plano=st['plano'], notifs=notifs, provas=st['provas'])
     tpl = open(os.path.join(TOOLS, 'site_template.html')).read()
     av = open(os.path.join(TOOLS, 'avatar.b64')).read().strip()
     html = tpl.replace('__AVATAR__', av).replace('__CLIENTE__', cfg_client['nome']).replace('__PAYLOAD__', encrypt_payload(data, cfg_client['code']))

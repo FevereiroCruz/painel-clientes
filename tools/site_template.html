@@ -192,6 +192,8 @@ td.nowrap{white-space:nowrap}
 .prose h4:first-child{margin-top:0}
 .prose p,.prose li{color:var(--fg)}
 .prose ul{padding-left:18px;margin:6px 0}
+.prose .kwlist{display:grid;gap:8px;margin:8px 0 4px}
+.prose .kw{font-size:13.5px;line-height:1.55;padding:8px 12px;border-left:3px solid var(--gold);background:var(--cream);border-radius:4px}
 .note{font-size:12.5px;color:var(--muted)}
 .brandlink{background:none;border:0;padding:0;color:var(--info);font-weight:600;cursor:pointer;text-align:left}
 .brandlink:hover{text-decoration:underline}
@@ -619,21 +621,25 @@ function vPlano(box){
 function vMetod(box){
   box.append(topline('Providências','Metodologia e fontes'));
   const c=el('div',{class:'card prose'});
+  const mon=D.families.filter(f=>f.monitorada&&inScope(f.id));
+  const V=D.variantes||{};
+  const fams=D.families.filter(f=>inScope(f.id)&&(V[f.id]||[]).length);
   c.append(
-    el('h4',null,'Escopo desta etapa'),
-    el('p',null,'Monitoramento digital das marcas SHARK TRATORES, SHARK DISTRIBUIDORA e AGROTRATOR. As demais marcas do grupo aparecem com a carteira do INPI e entram nas próximas varreduras.'),
-    el('h4',null,'Data e horário da consulta'),
+    el('h4',null,'Escopo'),
+    el('p',null,'Monitoramento digital diário '+(state.brand==='all'?'das '+mon.length+' marcas do grupo':'da marca '+((fam(state.brand)||{}).nome||''))+', com registro de anúncios ativos e inativos. Cada marca é pesquisada pelo nome e pelas variações listadas abaixo.'),
+    el('h4',null,'Data e horário da última consulta'),
     el('p',null,D.varredura+'.'),
-    el('h4',null,'Termos pesquisados'),
-    el('p',null,'“shark tratores”, “grupo shark”, “shark máquinas”, “agrotrator” e variações, além de termos típicos dos anúncios fraudulentos (“basculante 4x4”, “correntistas Bradesco”).'),
+    el('h4',null,'Palavras-chave e variações monitoradas'),
+    el('p',null,'Além do nome de cada marca, a varredura pesquisa as variações usadas por concorrentes e fraudadores em links patrocinados, anúncios e marketplaces, como grafias parecidas, combinações com produtos e serviços e nomes de lojas. Também acompanhamos termos típicos dos anúncios fraudulentos já identificados (“basculante 4x4”, “correntistas Bradesco”).'),
+    fams.length?el('div',{class:'kwlist'},fams.map(f=>el('div',{class:'kw'},el('b',null,f.nome+': '),V[f.id].join('; ')+'.'))):el('p',null,'Esta marca é pesquisada pelo nome registrado e por suas grafias mais próximas.'),
     el('h4',null,'Fontes consultadas'),
-    el('ul',null,['Biblioteca de Anúncios da Meta (Facebook e Instagram, Brasil, anúncios ativos e inativos)','Busca de páginas do Facebook','Instagram, por meio de buscador','Google, resultados orgânicos e patrocinados','Mercado Livre','Reclame Aqui','Sites oficiais das marcas, para identificar os canais legítimos'].map(t=>el('li',null,t))),
+    el('ul',null,['Biblioteca de Anúncios da Meta (Facebook e Instagram, Brasil, anúncios ativos e inativos)','Busca de páginas do Facebook','Instagram, por meio de buscador','Google, resultados orgânicos e patrocinados (links patrocinados com a marca ou as variações)','Mercado Livre, inclusive comparação de fotos e descrições com os anúncios oficiais','WHOIS do Registro.br, para domínios .br','Sites oficiais das marcas, para identificar os canais legítimos'].map(t=>el('li',null,t))),
     el('h4',null,'Fontes ainda não cobertas'),
-    el('ul',null,['Google patrocinado para “shark tratores”','Central de Transparência de Anúncios do Google','WHOIS do Registro.br e WHOIS internacional','Busca interna do Instagram'].map(t=>el('li',null,t))),
+    el('ul',null,['Central de Transparência de Anúncios do Google','WHOIS internacional (domínios genéricos, como .com)','Busca interna do Instagram','Bing e Yahoo'].map(t=>el('li',null,t))),
     el('h4',null,'Classificação de risco'),
     el('ul',null,[['Crítico','golpe ativo contra consumidores, com coleta de dados ou pagamentos em nome da empresa.'],['Alto','perfil falso, domínio idêntico ou parecido em uso, ou alcance relevante.'],['Médio','uso parcial da marca ou domínio parecido sem uso ativo verificado.'],['Baixo','menção irregular sem intenção aparente de confusão.']].map(([k,t])=>el('li',null,el('b',null,k+': '),t))),
     el('h4',null,'Preservação de prova'),
-    el('p',null,'As provas de todas as ocorrências foram preservadas pelo escritório antes das denúncias, para que o registro continue válido mesmo que as páginas saiam do ar.'),
+    el('p',null,'Cada ocorrência tem captura de tela com data, hora e endereço, disponível na aba Provas. Antes das denúncias, o escritório preserva as provas para que o registro continue válido mesmo que as páginas saiam do ar.'),
     el('h4',null,'Base legal'),
     el('p',null,'Lei de Propriedade Industrial (Lei 9.279/96), arts. 129, 130, 189, 190, 195 e 209; Marco Civil da Internet (Lei 12.965/14); Código de Defesa do Consumidor, quando há lesão a consumidores.'),
     el('h4',null,'Confidencialidade e LGPD'),
