@@ -32,11 +32,14 @@ main{padding:22px max(16px,env(safe-area-inset-left,0px)) 40px;display:flex;flex
 .copy{background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:4px 10px;font-size:12px}
 .note{font-size:12.5px;color:var(--muted)}a{color:#2B5BA8}
 @media (max-width:600px){.row{grid-template-columns:minmax(0,1fr)}.copy{justify-self:start}}
+#code.masked{-webkit-text-security:disc;text-security:disc}
+.codewrap{position:relative}.ver{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:#1B3A6B;font:600 12px inherit;cursor:pointer;padding:4px 6px}
+#code{padding-right:72px}
 </style></head><body>
 <div class="lock" id="lock"><form class="card" id="f" autocomplete="off">
 <div class="brand"><img src="__AV__" alt="Fevereiro &amp; Cruz"><div><b>Fevereiro &amp; Cruz</b><span>Uso interno do escritório</span></div></div>
 <h1>Painéis de clientes</h1><p style="margin:0;color:#5C6B85;font-size:13.5px">Acesso restrito à equipe. Digite o código mestre.</p>
-<label for="code">Código mestre</label><input id="code" type="password" maxlength="12" autocomplete="off" spellcheck="false" required>
+<label for="code">Código mestre</label><div class="codewrap"><input id="code" name="codigo-mestre-fc" type="text" inputmode="text" maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other" class="masked" required><button type="button" id="ver" class="ver" aria-label="Mostrar código">Mostrar</button></div>
 <button class="btn" id="b" type="submit">Entrar</button><div class="err" id="e" role="alert"></div></form></div>
 <div id="app" hidden><header><div class="in"><div class="eyebrow">Visão do escritório</div><h2>Painéis de clientes</h2><p id="upd"></p></div></header><main id="m"></main></div>
 <script type="application/json" id="payload">__P__</script>
@@ -45,13 +48,14 @@ main{padding:22px max(16px,env(safe-area-inset-left,0px)) 40px;display:flex;flex
 const P=JSON.parse(document.getElementById('payload').textContent),b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 const el=(t,a,...k)=>{const n=document.createElement(t);if(a)for(const[x,v]of Object.entries(a)){if(x==='class')n.className=v;else if(x.startsWith('on'))n.addEventListener(x.slice(2),v);else n.setAttribute(x,v)}for(const c of k.flat())if(c!=null)n.append(c.nodeType?c:document.createTextNode(String(c)));return n};
 const f=document.getElementById('f'),i=document.getElementById('code'),e=document.getElementById('e'),b=document.getElementById('b');
+const ver=document.getElementById('ver');ver.addEventListener('click',()=>{const m=i.classList.toggle('masked');ver.textContent=m?'Mostrar':'Ocultar';i.focus()});
 i.addEventListener('input',()=>{i.value=i.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,12);e.textContent=''});
 f.addEventListener('submit',async ev=>{ev.preventDefault();b.disabled=true;b.textContent='Verificando…';
 try{const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(i.value),'PBKDF2',false,['deriveKey']);
 const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(P.salt),iterations:P.it,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
 const D=JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(P.iv)},k,b64(P.ct))));
 i.value='';document.getElementById('lock').hidden=true;document.getElementById('app').hidden=false;render(D);
-}catch(x){e.textContent='Código incorreto.'}finally{b.disabled=false;b.textContent='Entrar'}});
+}catch(x){e.textContent=i.value.length!==12?'Código incorreto: o código mestre tem 12 caracteres (foram digitados '+i.value.length+').':'Código incorreto. Confira o código mestre no config.json do escritório.'}finally{b.disabled=false;b.textContent='Entrar'}});
 function copyBtn(t){return el('button',{class:'copy',type:'button',onclick:async ev=>{try{await navigator.clipboard.writeText(t);ev.target.textContent='Copiado'}catch(_){ev.target.textContent='Selecione e copie'}setTimeout(()=>ev.target.textContent='Copiar',1600)}},'Copiar')}
 function render(D){document.getElementById('upd').textContent='Atualizado em '+D.atualizado;const m=document.getElementById('m');
 for(const p of D.paineis){m.append(el('section',{class:'client'},
