@@ -114,6 +114,20 @@ definidas pelo escritório; a lista aparece para o cliente em Metodologia e font
 - Atualizar `estado.varredura` ("DD/MM/AAAA, entre HHhMM e HHhMM (horário de Brasília)") e acrescentar
   um item em `estado.historico` com o resumo do dia.
 
+### 3.1 Planilha CONTROLE OCORRÊNCIAS DIGITAIS - PAINEL (a rotina preenche)
+- Trazer a planilha do computador com `device_stage_files` (guardar o `mtimeMs`), abrir com openpyxl e
+  **acrescentar uma linha por ocorrência nova** (ID ainda não existente na coluna A), copiando a
+  formatação da linha 2: data de constatação, cliente e CNPJ (do `cnpjMap`; se não houver, deixar em
+  branco), marca, tipo (da lista: Perfil falso, Anúncio copiado, Brand bidding, Golpe, Pirataria,
+  Domínio, Outro), plataforma, URL, responsável aparente, descrição, risco, PROVA PRESERVADA? = SIM com
+  forma "Captura de tela" quando houver captura, DENÚNCIA ABERTA? = NÃO, STATUS = Identificado,
+  MOMENTO / ANDAMENTO = próximo passo, CONCLUÍDA? = NÃO.
+- Nunca alterar linhas existentes: elas são preenchidas pela equipe (protocolos, ata notarial,
+  notificação, remoção).
+- Salvar em `/mnt/user-data/outputs/` e gravar de volta com `device_commit_files` usando
+  `expectedMtimeMs`. Se o arquivo mudou no computador nesse meio-tempo (alguém editando), trazer de
+  novo e repetir; se o Excel estiver com o arquivo aberto e a gravação falhar, avisar o escritório.
+
 ## 4. Preparar a publicação (a publicação depende de aprovação do escritório)
 
 O painel do cliente só é atualizado em `main` depois que o escritório aprova. A rotina deixa tudo
@@ -139,8 +153,8 @@ Enviar uma mensagem (SendUserMessage) com:
 - ocorrências **novas**, com risco, marca e link (crítico primeiro, com destaque);
 - anúncios inativos registrados e possíveis remoções a confirmar;
 - o que vai mudar no painel do cliente se a publicação for aprovada;
-- lembrete de incluir as novas na planilha CONTROLE OCORRÊNCIAS DIGITAIS - PAINEL, para a equipe
-  registrar preservação, denúncia e notificação;
+- quais ocorrências foram acrescentadas à planilha CONTROLE OCORRÊNCIAS DIGITAIS - PAINEL, para a
+  equipe completar protocolos, preservação formal e notificações;
 - falhas (fonte que não abriu, computador sem acesso a alguma pasta);
 - a pergunta: "Aprova a publicação no painel do cliente?".
 Se não houve novidade, dizer isso em uma linha e não criar ramo de revisão.
