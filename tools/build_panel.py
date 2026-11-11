@@ -158,7 +158,11 @@ def merge_occ(state_occ, rows, notifs):
         if row.get('STATUS'): o['status'] = str(row['STATUS']).strip()
         if row.get('RISCO'): o['risco'] = str(row['RISCO']).strip()
         a = acoes_from_row(row, notifs)
-        if a: o['acoes'] = a
+        if a:
+            # notificação já registrada no painel, mas sem nº de referência na planilha: não perder a informação
+            if not d_br(row.get('N° REF NOTIFICAÇÃO')) and 'otificação extrajudicial' in o.get('acoes', '') and 'enviad' in o.get('acoes', ''):
+                a += ' Notificação extrajudicial enviada.'
+            o['acoes'] = a
         if row.get('MOMENTO / ANDAMENTO'): o['proximo'] = str(row['MOMENTO / ANDAMENTO']).strip()
         ref = d_br(row.get('N° REF NOTIFICAÇÃO'))
         if ref: o['notif'] = ref
